@@ -1,0 +1,9 @@
+{
+	"name": "midterm-df",
+	"location": "eastus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "4263fa25-794d-445f-b292-375e7c7bd831",
+		"tenantId": "a8eec281-aaa3-4dae-ac9b-9a398b9215e7"
+	}
+}

@@ -1,0 +1,9 @@
+{
+	"name": "IMDB-Movies-Analysis",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "22b36a35-87db-4229-a853-b4314b146b0e",
+		"tenantId": "a8eec281-aaa3-4dae-ac9b-9a398b9215e7"
+	}
+}

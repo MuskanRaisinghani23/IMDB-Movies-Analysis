@@ -15,10 +15,10 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "ds_title_basics",
+						"referenceName": "ds_name_basics_silver",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "sink"
 				}
 			],
 			"transformations": [
@@ -41,22 +41,11 @@
 				"NameBasics derive(deathYear = replace(deathYear, \"/N\", \"9999\")) ~> DataCleaning",
 				"DataCleaning sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     input(",
-				"          tconst as string,",
-				"          titleType as string,",
-				"          primaryTitle as string,",
-				"          originalTitle as string,",
-				"          isAdult as string,",
-				"          startYear as string,",
-				"          endYear as string,",
-				"          runtimeMinutes as string,",
-				"          genres as string",
-				"     ),",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     skipDuplicateMapOutputs: true) ~> sink"
 			]
 		}
 	}

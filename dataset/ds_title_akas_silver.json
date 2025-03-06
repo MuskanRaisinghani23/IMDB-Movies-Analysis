@@ -1,0 +1,22 @@
+{
+	"name": "ds_title_akas_silver",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "adlsmovieanalysis",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "silver"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

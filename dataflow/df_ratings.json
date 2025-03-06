@@ -1,12 +1,12 @@
 {
-	"name": "df_title_basics",
+	"name": "df_ratings",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "ds_title_basics",
+						"referenceName": "ds_ratings",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -15,34 +15,23 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "ds_title_basics_silver",
+						"referenceName": "ds_ratings_silver",
 						"type": "DatasetReference"
 					},
 					"name": "sink"
 				}
 			],
-			"transformations": [
-				{
-					"name": "derivedColumn1"
-				}
-			],
+			"transformations": [],
 			"scriptLines": [
 				"source(output(",
 				"          tconst as string,",
-				"          titleType as string,",
-				"          primaryTitle as string,",
-				"          originalTitle as string,",
-				"          isAdult as string,",
-				"          startYear as string,",
-				"          endYear as string,",
-				"          runtimeMinutes as string,",
-				"          genres as string",
+				"          averageRating as string,",
+				"          numVotes as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source1",
-				"source1 derive(endYear = replace(endYear, \"/N\", \"9999\")) ~> derivedColumn1",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"source1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     umask: 0022,",
 				"     preCommands: [],",

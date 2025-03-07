@@ -1,0 +1,9 @@
+{
+	"name": "damg7370-group4-imdb-df",
+	"location": "eastus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "0a632800-d929-48de-94e1-a1dd443c7616",
+		"tenantId": "a8eec281-aaa3-4dae-ac9b-9a398b9215e7"
+	}
+}

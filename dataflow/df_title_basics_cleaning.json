@@ -1,5 +1,5 @@
 {
-	"name": "df_title_basics",
+	"name": "df_title_basics_cleaning",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {

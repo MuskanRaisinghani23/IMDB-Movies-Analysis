@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "ratings",
 				"fileSystem": "silver"
 			},
 			"compressionCodec": "snappy"

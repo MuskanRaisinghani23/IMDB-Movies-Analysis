@@ -9,13 +9,13 @@
 						"referenceName": "ds_title_basics",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "TitleBasics"
 				}
 			],
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "ds_title_basics_silver",
+						"referenceName": "title_basics_parquet",
 						"type": "DatasetReference"
 					},
 					"name": "sink"
@@ -23,7 +23,7 @@
 			],
 			"transformations": [
 				{
-					"name": "derivedColumn1"
+					"name": "TitleDataCleaning"
 				}
 			],
 			"scriptLines": [
@@ -40,10 +40,14 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1",
-				"source1 derive(endYear = replace(endYear, \"/N\", \"9999\")) ~> derivedColumn1",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     ignoreNoFilesFound: false) ~> TitleBasics",
+				"TitleBasics derive(startYear = toInteger(iifNull(toInteger(startYear), 9999)),",
+				"          endYear = toInteger(iifNull(toInteger(endYear), 9999)),",
+				"          runtimeMinutes = toInteger(iifNull(toInteger(endYear), -1)),",
+				"          genres = iifNull(genres, \"Unknown\")) ~> TitleDataCleaning",
+				"TitleDataCleaning sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     format: 'parquet',",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",

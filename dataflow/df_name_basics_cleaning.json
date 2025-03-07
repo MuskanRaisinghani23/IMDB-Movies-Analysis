@@ -1,5 +1,5 @@
 {
-	"name": "df_name_basics",
+	"name": "df_name_basics_cleaning",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -15,15 +15,21 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "ds_name_basics_silver",
+						"referenceName": "name_basics_parquet",
 						"type": "DatasetReference"
 					},
-					"name": "sink"
+					"name": "sinkToSilver"
 				}
 			],
 			"transformations": [
 				{
-					"name": "DataCleaning"
+					"name": "ProfessionAndTitleCleaning"
+				},
+				{
+					"name": "NameCleaning"
+				},
+				{
+					"name": "YearCleaning"
 				}
 			],
 			"scriptLines": [
@@ -38,14 +44,30 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> NameBasics",
-				"NameBasics derive(deathYear = replace(deathYear, \"/N\", \"9999\")) ~> DataCleaning",
-				"DataCleaning sink(allowSchemaDrift: true,",
+				"YearCleaning derive(primaryProfession = iifNull(primaryProfession, \"Unknown\"),",
+				"          knownForTitles = iifNull(knownForTitles, \"Unknown\")) ~> ProfessionAndTitleCleaning",
+				"NameBasics derive(primaryName = trim(replace(primaryName, \"'\", ''))",
+				",",
+				"          birthYear = iif(isInteger(birthYear) && toInteger(birthYear) < 800, 9999, toInteger(birthYear)),",
+				"          deathYear = iif(isInteger(deathYear) && toInteger(deathYear) < 800, 9999, toInteger(deathYear))) ~> NameCleaning",
+				"NameCleaning derive(birthYear = toInteger(iifNull(birthYear, 9999)),",
+				"          deathYear = toInteger(iifNull(deathYear, 9999))) ~> YearCleaning",
+				"ProfessionAndTitleCleaning sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     format: 'parquet',",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink"
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          nconst,",
+				"          primaryName,",
+				"          birthYear,",
+				"          deathYear,",
+				"          primaryProfession,",
+				"          knownForTitles",
+				"     )) ~> sinkToSilver"
 			]
 		}
 	}

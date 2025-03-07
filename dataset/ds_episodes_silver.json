@@ -1,0 +1,19 @@
+{
+	"name": "ds_episodes_silver",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "adlsmovieanalysis",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "silver"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}

@@ -18,7 +18,7 @@
 						"referenceName": "ds_crew_silver",
 						"type": "DatasetReference"
 					},
-					"name": "sinktoSilver"
+					"name": "sink1"
 				}
 			],
 			"transformations": [
@@ -27,6 +27,12 @@
 				},
 				{
 					"name": "flatten1"
+				},
+				{
+					"name": "filter"
+				},
+				{
+					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
@@ -38,20 +44,27 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source1",
-				"source1 derive(writers = split(writers,\",\")) ~> derivedColumn1",
-				"derivedColumn1 foldDown(unroll(writers, writers),",
+				"source1 derive(writers = split(writers,\",\"),",
+				"          directors = split(directors,\",\")) ~> derivedColumn1",
+				"derivedColumn1 foldDown(unrollMultiple(writers,directors),",
 				"     mapColumn(",
+				"          tconst,",
+				"          directors = directors,",
 				"          writers",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> flatten1",
-				"flatten1 sink(allowSchemaDrift: true,",
+				"flatten1 filter(!(directors == '\\\\N' && writers == '\\\\N')) ~> filter",
+				"filter derive(directors = iif(directors == '\\\\N', 'Unknown', directors),",
+				"          writers = iif(writers == '\\\\N', 'Unknown', writers)) ~> derivedColumn2",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     format: 'parquet',",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sinktoSilver"
+				"     skipDuplicateMapOutputs: true) ~> sink1"
 			]
 		}
 	}

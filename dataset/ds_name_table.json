@@ -20,7 +20,27 @@
 		},
 		"schema": [
 			{
-				"name": "nconst\tprimaryName\tbirthYear\tdeathYear\tprimaryProfession\tknownForTitles",
+				"name": "nconst",
+				"type": "String"
+			},
+			{
+				"name": "primaryName",
+				"type": "String"
+			},
+			{
+				"name": "birthYear",
+				"type": "String"
+			},
+			{
+				"name": "deathYear",
+				"type": "String"
+			},
+			{
+				"name": "primaryProfession",
+				"type": "String"
+			},
+			{
+				"name": "knownForTitles",
 				"type": "String"
 			}
 		]

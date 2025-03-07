@@ -1,0 +1,74 @@
+{
+	"name": "df_name_basics_cleaning",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_name_basics",
+						"type": "DatasetReference"
+					},
+					"name": "NameBasics"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "name_basics_parquet",
+						"type": "DatasetReference"
+					},
+					"name": "sinkToSilver"
+				}
+			],
+			"transformations": [
+				{
+					"name": "ProfessionAndTitleCleaning"
+				},
+				{
+					"name": "NameCleaning"
+				},
+				{
+					"name": "YearCleaning"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          nconst as string,",
+				"          primaryName as string,",
+				"          birthYear as string,",
+				"          deathYear as string,",
+				"          primaryProfession as string,",
+				"          knownForTitles as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> NameBasics",
+				"YearCleaning derive(primaryProfession = iifNull(primaryProfession, \"Unknown\"),",
+				"          knownForTitles = iifNull(knownForTitles, \"Unknown\")) ~> ProfessionAndTitleCleaning",
+				"NameBasics derive(primaryName = trim(replace(primaryName, \"'\", ''))",
+				",",
+				"          birthYear = iif(isInteger(birthYear) && toInteger(birthYear) < 800, 9999, toInteger(birthYear)),",
+				"          deathYear = iif(isInteger(deathYear) && toInteger(deathYear) < 800, 9999, toInteger(deathYear))) ~> NameCleaning",
+				"NameCleaning derive(birthYear = toInteger(iifNull(birthYear, 9999)),",
+				"          deathYear = toInteger(iifNull(deathYear, 9999))) ~> YearCleaning",
+				"ProfessionAndTitleCleaning sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          nconst,",
+				"          primaryName,",
+				"          birthYear,",
+				"          deathYear,",
+				"          primaryProfession,",
+				"          knownForTitles",
+				"     )) ~> sinkToSilver"
+			]
+		}
+	}
+}

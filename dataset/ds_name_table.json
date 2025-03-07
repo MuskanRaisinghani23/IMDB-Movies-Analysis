@@ -1,8 +1,8 @@
 {
-	"name": "ds_name_basics",
+	"name": "ds_name_table",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "adlsmovieanalysis",
+			"referenceName": "ls_AzureDataLakeStorage",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -14,7 +14,6 @@
 				"fileSystem": "bronze"
 			},
 			"columnDelimiter": "\t",
-			"encodingName": "UTF-8",
 			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
@@ -45,6 +44,5 @@
 				"type": "String"
 			}
 		]
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }

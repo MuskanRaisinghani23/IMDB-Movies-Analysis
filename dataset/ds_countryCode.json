@@ -1,5 +1,5 @@
 {
-	"name": "ds_name_basics_silver",
+	"name": "ds_countryCode",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "adlsmovieanalysis",
@@ -10,13 +10,23 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileSystem": "silver"
+				"fileName": "iso_country_codes.csv",
+				"fileSystem": "bronze"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "CountryCode",
+				"type": "String"
+			},
+			{
+				"name": "Country",
+				"type": "String"
+			}
+		]
 	}
 }

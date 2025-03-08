@@ -1,0 +1,162 @@
+{
+	"name": "df_title_akas_cleaning",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_title_akas",
+						"type": "DatasetReference"
+					},
+					"name": "titleAkas"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_countryCode",
+						"type": "DatasetReference"
+					},
+					"name": "countryCodes"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_languageCodes",
+						"type": "DatasetReference"
+					},
+					"name": "languageCodes"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_title_akas_parquet",
+						"type": "DatasetReference"
+					},
+					"name": "sink2silver"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn"
+				},
+				{
+					"name": "joinCountryCode"
+				},
+				{
+					"name": "joinLanguageCode"
+				},
+				{
+					"name": "selectColumns"
+				},
+				{
+					"name": "join"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "selectFinalColumns"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          titleId as string,",
+				"          ordering as string,",
+				"          title as string,",
+				"          region as string,",
+				"          language as string,",
+				"          types as string,",
+				"          attributes as string,",
+				"          isOriginalTitle as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> titleAkas",
+				"source(output(",
+				"          CountryCode as string,",
+				"          Country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> countryCodes",
+				"source(output(",
+				"          {alpha3-b} as string,",
+				"          alpha2 as string,",
+				"          English as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> languageCodes",
+				"titleAkas derive(ordering = toInteger(ordering),",
+				"          title = iif(title == \"\\\\N\" || isNull(title), \"Unknown\", title),",
+				"          region = iif(region == \"\\\\N\" || isNull(region), \"Unknown\", region),",
+				"          language = iif(language == \"\\\\N\", \"Unknown\", language),",
+				"          types = iif(types == \"\\\\N\", \"Unknown\", types),",
+				"          attributes = iif(attributes == \"\\\\N\", \"Unknown\", attributes),",
+				"          isOriginalTitle = iif(isOriginalTitle == '1', true(), false())",
+				") ~> derivedColumn",
+				"derivedColumn, countryCodes join(region == CountryCode,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinCountryCode",
+				"joinCountryCode, languageCodes join(language == alpha2,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinLanguageCode",
+				"joinLanguageCode select(mapColumn(",
+				"          titleId,",
+				"          ordering,",
+				"          title,",
+				"          region,",
+				"          languageCode = language,",
+				"          types,",
+				"          attributes,",
+				"          isOriginalTitle,",
+				"          country = Country,",
+				"          language = English",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectColumns",
+				"selectColumns, languageCodes join(languageCode == {alpha3-b},",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join",
+				"join derive(language = coalesce(language, English , \"Unknown\"),",
+				"          country = iifNull(country, \"Unknown\")) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          titleId,",
+				"          ordering,",
+				"          title,",
+				"          types,",
+				"          attributes,",
+				"          isOriginalTitle,",
+				"          region = country,",
+				"          language",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectFinalColumns",
+				"selectFinalColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          nconst as string,",
+				"          primaryName as string,",
+				"          birthYear as integer,",
+				"          deathYear as integer,",
+				"          primaryProfession as string,",
+				"          knownForTitles as string",
+				"     ),",
+				"     format: 'parquet',",
+				"     partitionFileNames:['title_akas.parquet'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink2silver"
+			]
+		}
+	}
+}

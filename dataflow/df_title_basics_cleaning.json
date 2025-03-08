@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "title_basics_parquet",
+						"referenceName": "ds_title_basics_parquet",
 						"type": "DatasetReference"
 					},
 					"name": "sink"
@@ -44,10 +44,16 @@
 				"TitleBasics derive(startYear = toInteger(iifNull(toInteger(startYear), 9999)),",
 				"          endYear = toInteger(iifNull(toInteger(endYear), 9999)),",
 				"          runtimeMinutes = toInteger(iifNull(toInteger(endYear), -1)),",
-				"          genres = iifNull(genres, \"Unknown\")) ~> TitleDataCleaning",
+				"          genres = iif(genres == \"\\\\N\" || isNull(genres), \"Unknown\", genres),",
+				"          isAdult = iif(isAdult == '1', true(), false()),",
+				"          primaryTitle = iif(primaryTitle == '\\\\N' || isNull(primaryTitle), 'Unknown', primaryTitle)",
+				",",
+				"          originalTitle = iif(originalTitle == '\\\\N' || isNull(originalTitle), 'Unknown', originalTitle)",
+				") ~> TitleDataCleaning",
 				"TitleDataCleaning sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
+				"     partitionFileNames:['title_basics.parquet'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",

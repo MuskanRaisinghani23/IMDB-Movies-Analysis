@@ -1,21 +1,18 @@
 {
-	"name": "ds_title_akas_silver",
+	"name": "ds_title_basics_parquet",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "adlsmovieanalysis",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
-		"type": "DelimitedText",
+		"type": "Parquet",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileSystem": "silver"
 			},
-			"columnDelimiter": ",",
-			"escapeChar": "\\",
-			"firstRowAsHeader": true,
-			"quoteChar": "\""
+			"compressionCodec": "snappy"
 		},
 		"schema": []
 	}

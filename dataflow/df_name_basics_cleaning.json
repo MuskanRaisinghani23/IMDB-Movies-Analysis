@@ -15,10 +15,14 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "name_basics_parquet",
+						"referenceName": "ds_name_basics_parquet",
 						"type": "DatasetReference"
 					},
-					"name": "sinkToSilver"
+					"name": "sinkToSilver",
+					"rejectedDataLinkedService": {
+						"referenceName": "adlsmovieanalysis",
+						"type": "LinkedServiceReference"
+					}
 				}
 			],
 			"transformations": [
@@ -44,10 +48,11 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> NameBasics",
-				"YearCleaning derive(primaryProfession = iifNull(primaryProfession, \"Unknown\"),",
-				"          knownForTitles = iifNull(knownForTitles, \"Unknown\")) ~> ProfessionAndTitleCleaning",
-				"NameBasics derive(primaryName = trim(replace(primaryName, \"'\", ''))",
-				",",
+				"YearCleaning derive(primaryProfession = iif(primaryProfession == \"\\\\N\", \"Unknown\", primaryProfession),",
+				"          knownForTitles = iif(knownForTitles == \"\\\\N\", \"Unknown\", knownForTitles),",
+				"          primaryName = iif(primaryName == '\\\\N' || isNull(primaryName), 'Unknown', primaryName)",
+				") ~> ProfessionAndTitleCleaning",
+				"NameBasics derive(primaryName = trim(replace(primaryName, \"'\", '')),",
 				"          birthYear = iif(isInteger(birthYear) && toInteger(birthYear) < 800, 9999, toInteger(birthYear)),",
 				"          deathYear = iif(isInteger(deathYear) && toInteger(deathYear) < 800, 9999, toInteger(deathYear))) ~> NameCleaning",
 				"NameCleaning derive(birthYear = toInteger(iifNull(birthYear, 9999)),",
@@ -55,6 +60,7 @@
 				"ProfessionAndTitleCleaning sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
+				"     partitionFileNames:['name_basics.parquet'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
@@ -67,7 +73,8 @@
 				"          deathYear,",
 				"          primaryProfession,",
 				"          knownForTitles",
-				"     )) ~> sinkToSilver"
+				"     ),",
+				"     partitionBy('hash', 1)) ~> sinkToSilver"
 			]
 		}
 	}

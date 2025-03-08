@@ -73,7 +73,8 @@
 				"          deathYear,",
 				"          primaryProfession,",
 				"          knownForTitles",
-				"     )) ~> sinkToSilver"
+				"     ),",
+				"     partitionBy('hash', 1)) ~> sinkToSilver"
 			]
 		}
 	}

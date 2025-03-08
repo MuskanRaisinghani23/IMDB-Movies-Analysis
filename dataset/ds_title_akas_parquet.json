@@ -1,50 +1,44 @@
 {
-	"name": "ds_name_basics",
+	"name": "ds_title_akas_parquet",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "adlsmovieanalysis",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
-		"type": "DelimitedText",
+		"type": "Parquet",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "name.basics.tsv",
-				"fileSystem": "bronze"
+				"fileSystem": "silver"
 			},
-			"columnDelimiter": "\t",
-			"encodingName": "UTF-8",
-			"escapeChar": "\\",
-			"firstRowAsHeader": true,
-			"quoteChar": "\""
+			"compressionCodec": "snappy"
 		},
 		"schema": [
 			{
 				"name": "nconst",
-				"type": "String"
+				"type": "UTF8"
 			},
 			{
 				"name": "primaryName",
-				"type": "String"
+				"type": "UTF8"
 			},
 			{
 				"name": "birthYear",
-				"type": "String"
+				"type": "INT32"
 			},
 			{
 				"name": "deathYear",
-				"type": "String"
+				"type": "INT32"
 			},
 			{
 				"name": "primaryProfession",
-				"type": "String"
+				"type": "UTF8"
 			},
 			{
 				"name": "knownForTitles",
-				"type": "String"
+				"type": "UTF8"
 			}
 		]
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }

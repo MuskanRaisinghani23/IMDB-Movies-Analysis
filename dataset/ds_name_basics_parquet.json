@@ -1,5 +1,5 @@
 {
-	"name": "ds_episodes_silver",
+	"name": "ds_name_basics_parquet",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "adlsmovieanalysis",

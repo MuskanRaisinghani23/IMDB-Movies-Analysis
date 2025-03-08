@@ -9,7 +9,11 @@
 						"referenceName": "ds_ratings",
 						"type": "DatasetReference"
 					},
+<<<<<<< HEAD
 					"name": "source"
+=======
+					"name": "source1"
+>>>>>>> origin/main
 				}
 			],
 			"sinks": [
@@ -30,18 +34,28 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
+<<<<<<< HEAD
 				"     ignoreNoFilesFound: false,",
 				"     partitionBy('hash', 1)) ~> source",
 				"source sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
 				"     partitionFileNames:['ratings.parquet'],",
+=======
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+>>>>>>> origin/main
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
+<<<<<<< HEAD
 				"     skipDuplicateMapOutputs: true,",
 				"     partitionBy('hash', 1)) ~> sink"
+=======
+				"     skipDuplicateMapOutputs: true) ~> sink"
+>>>>>>> origin/main
 			]
 		}
 	}

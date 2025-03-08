@@ -1,0 +1,65 @@
+{
+	"name": "df_title_basics_cleaning",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_title_basics",
+						"type": "DatasetReference"
+					},
+					"name": "TitleBasics"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_title_basics_parquet",
+						"type": "DatasetReference"
+					},
+					"name": "sink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "TitleDataCleaning"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          tconst as string,",
+				"          titleType as string,",
+				"          primaryTitle as string,",
+				"          originalTitle as string,",
+				"          isAdult as string,",
+				"          startYear as string,",
+				"          endYear as string,",
+				"          runtimeMinutes as string,",
+				"          genres as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> TitleBasics",
+				"TitleBasics derive(startYear = toInteger(iifNull(toInteger(startYear), 9999)),",
+				"          endYear = toInteger(iifNull(toInteger(endYear), 9999)),",
+				"          runtimeMinutes = toInteger(iifNull(toInteger(endYear), -1)),",
+				"          genres = iif(genres == \"\\\\N\" || isNull(genres), \"Unknown\", genres),",
+				"          isAdult = iif(isAdult == '1', true(), false()),",
+				"          primaryTitle = iif(primaryTitle == '\\\\N' || isNull(primaryTitle), 'Unknown', primaryTitle)",
+				",",
+				"          originalTitle = iif(originalTitle == '\\\\N' || isNull(originalTitle), 'Unknown', originalTitle)",
+				") ~> TitleDataCleaning",
+				"TitleDataCleaning sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     partitionFileNames:['title_basics.parquet'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink"
+			]
+		}
+	}
+}

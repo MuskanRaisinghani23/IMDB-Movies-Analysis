@@ -1,5 +1,5 @@
 {
-	"name": "ds_ratings_silver",
+	"name": "ds_title_basics_parquet",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "adlsmovieanalysis",
@@ -10,7 +10,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "ratings",
 				"fileSystem": "silver"
 			},
 			"compressionCodec": "snappy"

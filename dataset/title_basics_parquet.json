@@ -1,0 +1,19 @@
+{
+	"name": "title_basics_parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "adlsmovieanalysis",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "silver"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}

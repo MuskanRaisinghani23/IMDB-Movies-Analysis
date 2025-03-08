@@ -1,5 +1,5 @@
 {
-	"name": "title_akas_parquet",
+	"name": "ds_title_akas_parquet",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "adlsmovieanalysis",

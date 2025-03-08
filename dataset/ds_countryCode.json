@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "country_codes.csv",
+				"fileName": "iso_country_codes.csv",
 				"fileSystem": "bronze"
 			},
 			"columnDelimiter": ",",

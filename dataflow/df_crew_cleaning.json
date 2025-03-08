@@ -1,5 +1,5 @@
 {
-	"name": "df_crew",
+	"name": "df_crew_cleaning",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -49,7 +49,7 @@
 				"derivedColumn1 foldDown(unrollMultiple(writers,directors),",
 				"     mapColumn(",
 				"          tconst,",
-				"          directors = directors,",
+				"          directors,",
 				"          writers",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
@@ -60,11 +60,13 @@
 				"derivedColumn2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
+				"     partitionFileNames:['crew.parquet'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
 	}

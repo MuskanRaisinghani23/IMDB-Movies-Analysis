@@ -1,5 +1,5 @@
 {
-	"name": "df_ratings",
+	"name": "df_ratings_cleaning",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -15,10 +15,10 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "ds_ratings_silver",
+						"referenceName": "ds_ratings_parquet",
 						"type": "DatasetReference"
 					},
-					"name": "sink"
+					"name": "sink2silver"
 				}
 			],
 			"transformations": [],
@@ -33,11 +33,19 @@
 				"     ignoreNoFilesFound: false) ~> source1",
 				"source1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     input(",
+				"          tconst as string,",
+				"          averageRating as string,",
+				"          numVotes as string",
+				"     ),",
+				"     format: 'parquet',",
+				"     partitionFileNames:['ratings.parquet'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink"
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink2silver"
 			]
 		}
 	}

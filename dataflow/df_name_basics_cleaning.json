@@ -18,7 +18,11 @@
 						"referenceName": "name_basics_parquet",
 						"type": "DatasetReference"
 					},
-					"name": "sinkToSilver"
+					"name": "sinkToSilver",
+					"rejectedDataLinkedService": {
+						"referenceName": "adlsmovieanalysis",
+						"type": "LinkedServiceReference"
+					}
 				}
 			],
 			"transformations": [

@@ -1,5 +1,5 @@
 {
-	"name": "ds_crew_silver",
+	"name": "ds_crew_parquet",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "adlsmovieanalysis",

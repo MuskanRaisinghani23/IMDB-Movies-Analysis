@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "ds_principal_silver",
+						"referenceName": "ds_principal_parquet",
 						"type": "DatasetReference"
 					},
 					"name": "sink2silver"

@@ -1,5 +1,5 @@
 {
-	"name": "df_principals",
+	"name": "df_principals_cleaning",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -18,7 +18,7 @@
 						"referenceName": "ds_principal_silver",
 						"type": "DatasetReference"
 					},
-					"name": "sink"
+					"name": "sink2silver"
 				}
 			],
 			"transformations": [
@@ -41,11 +41,13 @@
 				"source1 derive(characters = replace(replace(replace(characters, '[', ''), ']', ''), '\"', '')) ~> derivedColumn1",
 				"derivedColumn1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     partitionFileNames:['principals.parquet'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink"
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink2silver"
 			]
 		}
 	}

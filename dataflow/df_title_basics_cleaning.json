@@ -62,7 +62,7 @@
 				"          genres as string",
 				"     ),",
 				"     format: 'parquet',",
-				"     partitionFileNames:['title_basics.parquet'],",
+				"     partitionFileNames:['title_basics_cleaned.parquet'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",

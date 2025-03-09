@@ -1,5 +1,5 @@
 {
-	"name": "SnowflakeTable2",
+	"name": "TitleBasicsStageTable",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "Snowflake",

@@ -24,6 +24,9 @@
 			"transformations": [
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
@@ -38,8 +41,10 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source1",
-				"source1 derive(characters = replace(replace(replace(characters, '[', ''), ']', ''), '\"', '')) ~> derivedColumn1",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"source1 derive(characters = replace(replace(replace(characters, '[', ''), ']', ''), '\"', ''),",
+				"          job = iif(job == \"\\\\N\" || isNull(job), \"Unknown\", job)) ~> derivedColumn1",
+				"derivedColumn1 derive(characters = iif(characters == \"\\\\N\" || isNull(characters), \"Unknown\", characters)) ~> derivedColumn2",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['principals.parquet'],",
 				"     umask: 0022,",

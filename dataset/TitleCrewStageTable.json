@@ -13,16 +13,12 @@
 				"type": "VARCHAR"
 			},
 			{
-				"name": "AVERAGERATING",
-				"type": "NUMBER",
-				"precision": 4,
-				"scale": 2
+				"name": "DIRECTORS",
+				"type": "VARCHAR"
 			},
 			{
-				"name": "NUMVOTES",
-				"type": "NUMBER",
-				"precision": 38,
-				"scale": 0
+				"name": "WRITERS",
+				"type": "VARCHAR"
 			}
 		],
 		"typeProperties": {

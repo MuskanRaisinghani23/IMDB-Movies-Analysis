@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "principals.parquet",
 				"fileSystem": "silver"
 			},
 			"columnDelimiter": ",",
@@ -17,7 +18,32 @@
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "tconst",
+				"type": "String"
+			},
+			{
+				"name": "ordering",
+				"type": "String"
+			},
+			{
+				"name": "nconst",
+				"type": "String"
+			},
+			{
+				"name": "category",
+				"type": "String"
+			},
+			{
+				"name": "job",
+				"type": "String"
+			},
+			{
+				"name": "characters",
+				"type": "String"
+			}
+		]
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
 }

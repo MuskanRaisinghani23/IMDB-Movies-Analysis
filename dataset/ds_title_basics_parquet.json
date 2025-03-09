@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "title_basics.parquet",
+				"fileName": "title_basics_cleaned.parquet",
 				"fileSystem": "silver"
 			},
 			"compressionCodec": "snappy"

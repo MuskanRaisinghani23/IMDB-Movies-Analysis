@@ -10,33 +10,42 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "title_akas.parquet",
 				"fileSystem": "silver"
 			},
 			"compressionCodec": "snappy"
 		},
 		"schema": [
 			{
-				"name": "nconst",
+				"name": "titleId",
 				"type": "UTF8"
 			},
 			{
-				"name": "primaryName",
-				"type": "UTF8"
-			},
-			{
-				"name": "birthYear",
+				"name": "ordering",
 				"type": "INT32"
 			},
 			{
-				"name": "deathYear",
-				"type": "INT32"
-			},
-			{
-				"name": "primaryProfession",
+				"name": "title",
 				"type": "UTF8"
 			},
 			{
-				"name": "knownForTitles",
+				"name": "types",
+				"type": "UTF8"
+			},
+			{
+				"name": "attributes",
+				"type": "UTF8"
+			},
+			{
+				"name": "isOriginalTitle",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "region",
+				"type": "UTF8"
+			},
+			{
+				"name": "language",
 				"type": "UTF8"
 			}
 		]

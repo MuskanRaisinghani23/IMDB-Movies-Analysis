@@ -94,7 +94,7 @@
 				"          types = iif(types == \"\\\\N\", \"Unknown\", types),",
 				"          attributes = iif(attributes == \"\\\\N\", \"Unknown\", attributes),",
 				"          isOriginalTitle = iif(isOriginalTitle == '1', true(), false())) ~> derivedColumn",
-				"derivedColumn, countryCodes join(region == CountryCode,",
+				"derivedColumn, countryCodes join(region == upper(CountryCode),",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",

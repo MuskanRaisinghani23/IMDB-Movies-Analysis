@@ -5,6 +5,8 @@
 			{
 				"name": "TitlePrincipals2Stg",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "NameBasics2Stg",
@@ -128,6 +130,8 @@
 			{
 				"name": "NameBasics2Stg",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "TitleAkas2Stg",
@@ -251,6 +255,8 @@
 			{
 				"name": "TitleBasics2Stg",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.01:00:00",
@@ -540,6 +546,8 @@
 			{
 				"name": "TitleCrew2Stg",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "TitlePrincipals2Stg",
@@ -633,6 +641,8 @@
 			{
 				"name": "TitleEpisodes2Stg",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "TitleCrew2Stg",
@@ -736,6 +746,8 @@
 			{
 				"name": "TitleRating2Stg",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "TitleEpisodes2Stg",

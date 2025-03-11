@@ -10,6 +10,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "FlattenedGenre"
+				},
+				{
+					"dataset": {
+						"referenceName": "Dim_Genre",
+						"type": "DatasetReference"
+					},
+					"name": "sourceDimGenre"
 				}
 			],
 			"sinks": [],
@@ -19,9 +26,6 @@
 				},
 				{
 					"name": "select1"
-				},
-				{
-					"name": "join2"
 				}
 			],
 			"scriptLines": [
@@ -32,6 +36,15 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'table') ~> FlattenedGenre",
+				"source(output(",
+				"          GENRE_SK as decimal(38,0),",
+				"          GENRE as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DT as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourceDimGenre",
 				"FlattenedGenre join(FlattenedGenre@GENRE == DimFlattenSecond@GENRE,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
@@ -43,12 +56,7 @@
 				"          GENRE_SK",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 join(select1@TCONST == DimTitleSrc@TCONST,",
-				"     joinType:'inner',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join2"
+				"     skipDuplicateMapOutputs: true) ~> select1"
 			]
 		}
 	}

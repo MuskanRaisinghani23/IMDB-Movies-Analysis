@@ -97,10 +97,18 @@
 				"     insertable:true,",
 				"     updateable:false,",
 				"     upsertable:false,",
+				"     truncate:true,",
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     stageInsert: true) ~> sink2DimPerson"
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          PERSON_SK,",
+				"          NCONST,",
+				"          PRIMARY_NAME = PRIMARYNAME,",
+				"          DI_JOB_ID = DI_Job_ID,",
+				"          DI_LOAD_DT = DI_Load_Date",
+				"     )) ~> sink2DimPerson"
 			]
 		}
 	}

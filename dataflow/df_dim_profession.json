@@ -17,6 +17,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "jobCategory"
+				},
+				{
+					"dataset": {
+						"referenceName": "dim_profession",
+						"type": "DatasetReference"
+					},
+					"name": "ProfessionDimMaxID"
 				}
 			],
 			"sinks": [],
@@ -35,6 +42,12 @@
 				},
 				{
 					"name": "selectProfessionCOlumn"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "surrogateKey1"
 				}
 			],
 			"scriptLines": [
@@ -52,6 +65,13 @@
 				"     validateSchema: false,",
 				"     query: 'SELECT DISTINCT CATEGORY\\nFROM RAW_STAGE_SCHEMA.TITLE_PRINCIPALS',",
 				"     format: 'query') ~> jobCategory",
+				"source(output(",
+				"          MAX_PROFESSION_SK as decimal(38,0)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     query: 'SELECT NVL(MAX(PROFESSION_SK), 0) as\\nMAX_PROFESSION_SK FROM \\nIMDB_SCHEMA.DIM_PROFESSION',",
+				"     format: 'query') ~> ProfessionDimMaxID",
 				"select1, select2 union(byName: true)~> unionProfession",
 				"profession select(mapColumn(",
 				"          PROFESSION = PRIMARYPROFESSION",
@@ -69,7 +89,15 @@
 				"          PROFESSION",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> selectProfessionCOlumn"
+				"     skipDuplicateMapOutputs: true) ~> selectProfessionCOlumn",
+				"selectProfessionCOlumn, ProfessionDimMaxID join(1==1,",
+				"     joinType:'cross',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 keyGenerate(output({undefined} as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1"
 			]
 		}
 	}

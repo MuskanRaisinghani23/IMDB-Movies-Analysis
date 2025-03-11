@@ -25,7 +25,7 @@
 						"referenceName": "ds_dim_Person",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "sink2DimPerson"
 				}
 			],
 			"transformations": [
@@ -72,6 +72,7 @@
 				"          DI_Load_Date = currentTimestamp()) ~> derivedColumn",
 				"derivedColumn select(mapColumn(",
 				"          NCONST,",
+				"          PERSON_SK,",
 				"          PRIMARYNAME,",
 				"          DI_Job_ID,",
 				"          DI_Load_Date",
@@ -99,7 +100,7 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     stageInsert: true) ~> sink1"
+				"     stageInsert: true) ~> sink2DimPerson"
 			]
 		}
 	}

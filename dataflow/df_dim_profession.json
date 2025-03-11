@@ -31,7 +31,10 @@
 					"name": "select2"
 				},
 				{
-					"name": "aggregate1"
+					"name": "distinctProfessionAggregate"
+				},
+				{
+					"name": "selectProfessionCOlumn"
 				}
 			],
 			"scriptLines": [
@@ -60,8 +63,13 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select2",
-				"unionProfession aggregate(groupBy(PROFESSION),",
-				"     UNIQUE_PROFESSION = ERROR_FUNCTION('')) ~> aggregate1"
+				"unionProfession aggregate(groupBy({sha2(256, columns())} = sha2(256, columns())),",
+				"     each(match(true()), $$ = first($$))) ~> distinctProfessionAggregate",
+				"distinctProfessionAggregate select(mapColumn(",
+				"          PROFESSION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectProfessionCOlumn"
 			]
 		}
 	}

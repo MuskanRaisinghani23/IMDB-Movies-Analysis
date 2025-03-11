@@ -33,7 +33,7 @@
 					"name": "surrogateKey"
 				},
 				{
-					"name": "derivedColumn1"
+					"name": "derivedColumn"
 				},
 				{
 					"name": "select1"
@@ -65,8 +65,8 @@
 				"     stepValue: 1L) ~> surrogateKey",
 				"surrogateKey derive(DI_Job_ID = uuid(),",
 				"          CHARACTER_SK = MAX_CHARACTER_SK + rowNum,",
-				"          DI_Load_Date = currentTimestamp()) ~> derivedColumn1",
-				"derivedColumn1 select(mapColumn(",
+				"          DI_Load_Date = currentTimestamp()) ~> derivedColumn",
+				"derivedColumn select(mapColumn(",
 				"          CHARACTERS,",
 				"          CHARACTER_SK,",
 				"          DI_Job_ID,",

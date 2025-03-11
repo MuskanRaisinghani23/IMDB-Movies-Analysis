@@ -27,6 +27,12 @@
 				},
 				{
 					"name": "derivedColumn2"
+				},
+				{
+					"name": "derivedColumn3"
+				},
+				{
+					"name": "derivedColumn4"
 				}
 			],
 			"scriptLines": [
@@ -44,7 +50,14 @@
 				"source1 derive(characters = replace(replace(replace(characters, '[', ''), ']', ''), '\"', ''),",
 				"          job = iif(job == \"\\\\N\" || isNull(job), \"Unknown\", job)) ~> derivedColumn1",
 				"derivedColumn1 derive(characters = iif(characters == \"\\\\N\" || isNull(characters), \"Unknown\", characters)) ~> derivedColumn2",
-				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"derivedColumn2 derive(characters = iif(startsWith(job, 'characters:'), \r",
+				"    substring(job, length('characters:') + 1), \r",
+				"    characters),",
+				"          job = iif(startsWith(job, 'characters:'), 'Unknown', job)) ~> derivedColumn3",
+				"derivedColumn3 derive(characters = iif(startsWith(characters, 'characters:'), \r",
+				"    substring(characters, length('characters:') + 1), \r",
+				"    characters)) ~> derivedColumn4",
+				"derivedColumn4 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          tconst as string,",

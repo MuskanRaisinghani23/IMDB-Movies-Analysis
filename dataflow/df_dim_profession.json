@@ -1,0 +1,68 @@
+{
+	"name": "df_dim_profession",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "name_basics",
+						"type": "DatasetReference"
+					},
+					"name": "profession"
+				},
+				{
+					"dataset": {
+						"referenceName": "title_principal",
+						"type": "DatasetReference"
+					},
+					"name": "jobCategory"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "unionProfession"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "aggregate1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          PRIMARYPROFESSION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     query: 'Select distinct PRIMARYPROFESSION from FLATTEN_SCHEMA.NAME_BASICS_PRIMARY_PROFESSION',",
+				"     format: 'query') ~> profession",
+				"source(output(",
+				"          CATEGORY as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     query: 'SELECT DISTINCT CATEGORY\\nFROM RAW_STAGE_SCHEMA.TITLE_PRINCIPALS',",
+				"     format: 'query') ~> jobCategory",
+				"select1, select2 union(byName: true)~> unionProfession",
+				"profession select(mapColumn(",
+				"          PROFESSION = PRIMARYPROFESSION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"jobCategory select(mapColumn(",
+				"          PROFESSION = CATEGORY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"unionProfession aggregate(groupBy(PROFESSION),",
+				"     UNIQUE_PROFESSION = ERROR_FUNCTION('')) ~> aggregate1"
+			]
+		}
+	}
+}

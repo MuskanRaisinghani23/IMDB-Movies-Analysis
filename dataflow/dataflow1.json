@@ -43,6 +43,9 @@
 				}
 			],
 			"scriptLines": [
+				"parameters{",
+				"     Job_ID_TitleBasics as string (\"10\")",
+				"}",
 				"source(output(",
 				"          TCONST as string,",
 				"          TITLETYPE as string,",

@@ -1,0 +1,97 @@
+{
+	"name": "df_bridge_genre",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Dim_Title",
+						"type": "DatasetReference"
+					},
+					"name": "DimTitleSrc"
+				},
+				{
+					"dataset": {
+						"referenceName": "Flattened_Genre_Table",
+						"type": "DatasetReference"
+					},
+					"name": "DimFlattenSecond"
+				},
+				{
+					"dataset": {
+						"referenceName": "Flattened_Genre_Table",
+						"type": "DatasetReference"
+					},
+					"name": "FlattenedGenre"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "join2"
+				},
+				{
+					"name": "join3"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          TITLE_SK as decimal(38,0),",
+				"          TCONST as string,",
+				"          PRIMARY_TITLE as string,",
+				"          TITLE_TYPE as string,",
+				"          START_YEAR as decimal(4,0),",
+				"          IS_ADULT as boolean,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DT as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> DimTitleSrc",
+				"source(output(",
+				"          TCONST as string,",
+				"          GENRE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> DimFlattenSecond",
+				"source(output(",
+				"          TCONST as string,",
+				"          GENRE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> FlattenedGenre",
+				"FlattenedGenre, DimFlattenSecond join(FlattenedGenre@GENRE == DimFlattenSecond@GENRE,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 select(mapColumn(",
+				"          TCONST = FlattenedGenre@TCONST,",
+				"          GENRE = FlattenedGenre@GENRE,",
+				"          GENRE_SK",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1, DimTitleSrc join(select1@TCONST == DimTitleSrc@TCONST,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"DimTitleSrc, DimFlattenSecond join(DimTitleSrc@TCONST == DimFlattenSecond@TCONST,",
+				"     joinType:'right',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join3"
+			]
+		}
+	}
+}

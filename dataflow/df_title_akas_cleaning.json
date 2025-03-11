@@ -56,6 +56,9 @@
 				},
 				{
 					"name": "selectFinalColumns"
+				},
+				{
+					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
@@ -125,7 +128,7 @@
 				"     broadcast: 'auto')~> join",
 				"join derive(language = coalesce(language, English , \"Unknown\"),",
 				"          country = iifNull(country, \"Unknown\")) ~> derivedColumn1",
-				"derivedColumn1 select(mapColumn(",
+				"derivedColumn2 select(mapColumn(",
 				"          titleId,",
 				"          ordering,",
 				"          title,",
@@ -137,6 +140,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> selectFinalColumns",
+				"derivedColumn1 derive(language = split(language, ';')[1]) ~> derivedColumn2",
 				"selectFinalColumns sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",

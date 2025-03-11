@@ -1,0 +1,110 @@
+{
+	"name": "df_dim_person",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "NameBasicsStageTable",
+						"type": "DatasetReference"
+					},
+					"name": "namebasics"
+				},
+				{
+					"dataset": {
+						"referenceName": "Dim_Person",
+						"type": "DatasetReference"
+					},
+					"name": "PersonDimMaxID"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Dim_Person",
+						"type": "DatasetReference"
+					},
+					"name": "sink2DimPerson"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn"
+				},
+				{
+					"name": "select"
+				},
+				{
+					"name": "surrogateKey"
+				},
+				{
+					"name": "join"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     Job_ID as string (\"10\")",
+				"}",
+				"source(output(",
+				"          NCONST as string,",
+				"          PRIMARYNAME as string,",
+				"          BIRTHYEAR as decimal(4,0),",
+				"          DEATHYEAR as decimal(4,0),",
+				"          PRIMARYPROFESSION as string,",
+				"          KNOWNFORTITLES as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> namebasics",
+				"source(output(",
+				"          MAX_PERSON_SK as decimal(38,0)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     query: 'SELECT NVL(MAX(PERSON_SK), 0) as\\nMAX_PERSON_SK FROM \\nIMDB_SCHEMA.DIM_PERSON',",
+				"     format: 'query') ~> PersonDimMaxID",
+				"surrogateKey derive(PERSON_SK = MAX_PERSON_SK + RowNum,",
+				"          DI_Job_ID = uuid(),",
+				"          DI_Load_Date = currentTimestamp()) ~> derivedColumn",
+				"derivedColumn select(mapColumn(",
+				"          NCONST,",
+				"          PRIMARYNAME,",
+				"          BIRTHYEAR,",
+				"          DEATHYEAR,",
+				"          PRIMARYPROFESSION,",
+				"          KNOWNFORTITLES,",
+				"          DI_Job_ID,",
+				"          DI_Load_Date",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select",
+				"join keyGenerate(output(RowNum as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey",
+				"namebasics, PersonDimMaxID join(1==1,",
+				"     joinType:'cross',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join",
+				"select sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PERSON_SK as decimal(38,0),",
+				"          NCONST as string,",
+				"          PRIMARY_NAME as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DT as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     stageInsert: true) ~> sink2DimPerson"
+			]
+		}
+	}
+}

@@ -35,16 +35,9 @@
 				}
 			},
 			{
-				"name": "df_dim_genre",
+				"name": "df_dim_person",
 				"type": "ExecuteDataFlow",
-				"dependsOn": [
-					{
-						"activity": "df_dim_title",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -55,10 +48,13 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_dim_genre",
+						"referenceName": "df_dim_person",
 						"type": "DataFlowReference",
 						"parameters": {
-							"Job_ID_Genre": "\"10\""
+							"Job_ID": {
+								"value": "'@{substring(pipeline().RunId, 1, 10)}'",
+								"type": "Expression"
+							}
 						}
 					},
 					"compute": {

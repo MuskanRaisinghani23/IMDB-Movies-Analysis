@@ -106,6 +106,7 @@
 				"     insertable:true,",
 				"     updateable:false,",
 				"     upsertable:false,",
+				"     truncate:true,",
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
@@ -113,6 +114,10 @@
 				"     mapColumn(",
 				"          TITLE_SK,",
 				"          TCONST,",
+				"          PRIMARY_TITLE = PRIMARYTITLE,",
+				"          TITLE_TYPE = TITLETYPE,",
+				"          START_YEAR = STARTYEAR,",
+				"          IS_ADULT = ISADULT,",
 				"          DI_JOB_ID,",
 				"          DI_LOAD_DT",
 				"     )) ~> sink2DimTitle"

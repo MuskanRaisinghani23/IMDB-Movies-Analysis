@@ -44,7 +44,7 @@
 			],
 			"scriptLines": [
 				"parameters{",
-				"     Job_ID as string (\"10\")",
+				"     Job_ID_Person as string (\"10\")",
 				"}",
 				"source(output(",
 				"          NCONST as string,",

@@ -1,5 +1,5 @@
 {
-	"name": "DimGenre",
+	"name": "Dim_Genre",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "Snowflake",

@@ -1,0 +1,112 @@
+{
+	"name": "df_dim_job",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "TitlePrincipalsStageTable",
+						"type": "DatasetReference"
+					},
+					"name": "principals"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_Dim_Job",
+						"type": "DatasetReference"
+					},
+					"name": "JobMaxJobID"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_Dim_Job",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "surrogateKey"
+				},
+				{
+					"name": "derivedColumn"
+				},
+				{
+					"name": "select"
+				},
+				{
+					"name": "join"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     Job_ID as string (\"10\")",
+				"}",
+				"source(output(",
+				"          TCONST as string,",
+				"          ORDERING as decimal(38,0),",
+				"          NCONST as string,",
+				"          CATEGORY as string,",
+				"          JOB as string,",
+				"          CHARACTERS as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> principals",
+				"source(output(",
+				"          MAX_JOB_SK as decimal(38,0)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     query: 'SELECT NVL(MAX(JOB_SK), 0) as\\nMAX_JOB_SK FROM \\nIMDB_SCHEMA.DIM_JOB',",
+				"     format: 'query') ~> JobMaxJobID",
+				"join keyGenerate(output(rowNum as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey",
+				"surrogateKey derive(DI_JOB_ID = uuid(),",
+				"          DI_Load_Date = currentTimestamp(),",
+				"          JOB_SK = MAX_JOB_SK + rowNum) ~> derivedColumn",
+				"derivedColumn select(mapColumn(",
+				"          JOB,",
+				"          JOB_SK,",
+				"          DI_JOB_ID,",
+				"          DI_Load_Date",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select",
+				"principals, JobMaxJobID join(1==1,",
+				"     joinType:'cross',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join",
+				"select sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          JOB_SK as decimal(38,0),",
+				"          JOB_NAME as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DT as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          JOB_SK,",
+				"          JOB_NAME = JOB,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DT = DI_Load_Date",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

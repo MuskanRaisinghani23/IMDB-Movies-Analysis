@@ -1,0 +1,77 @@
+{
+	"name": "df_dim_akas_detail",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "TitleAkasStageTable",
+						"type": "DatasetReference"
+					},
+					"name": "AkasTable"
+				},
+				{
+					"dataset": {
+						"referenceName": "DimTitleSnowflakeTable",
+						"type": "DatasetReference"
+					},
+					"name": "dimTitle"
+				},
+				{
+					"dataset": {
+						"referenceName": "Dim_Akas",
+						"type": "DatasetReference"
+					},
+					"name": "TitleAkasMaxID"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "join1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     Job_ID_Akas as string (\"10\")",
+				"}",
+				"source(output(",
+				"          TITLEID as string,",
+				"          ORDERING as decimal(38,0),",
+				"          TITLE as string,",
+				"          REGION as string,",
+				"          LANGUAGE as string,",
+				"          TYPES as string,",
+				"          ATTRIBUTES as string,",
+				"          ISORIGINALTITLE as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> AkasTable",
+				"source(output(",
+				"          TITLE_SK as decimal(38,0),",
+				"          TCONST as string,",
+				"          PRIMARY_TITLE as string,",
+				"          TITLE_TYPE as string,",
+				"          START_YEAR as decimal(4,0),",
+				"          IS_ADULT as boolean,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DT as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> dimTitle",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     query: 'SELECT NVL(MAX(AKAS_SK), 0) as\\nMAX_AKAS_SK FROM \\nIMDB_SCHEMA.DIM_AKAS_DETAILS',",
+				"     format: 'query') ~> TitleAkasMaxID",
+				"AkasTable, dimTitle join(TITLEID == TCONST,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1"
+			]
+		}
+	}
+}

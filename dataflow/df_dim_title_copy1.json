@@ -1,0 +1,109 @@
+{
+	"name": "df_dim_title_copy1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "TitleBasicsStageTable",
+						"type": "DatasetReference"
+					},
+					"name": "titlebasics"
+				},
+				{
+					"dataset": {
+						"referenceName": "dim_title_2",
+						"type": "DatasetReference"
+					},
+					"name": "TitleDimMaxID2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dim_title_2",
+						"type": "DatasetReference"
+					},
+					"name": "sink2DimTitle"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "surrogateKey"
+				},
+				{
+					"name": "join1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     Job_ID as string (\"10\")",
+				"}",
+				"source(output(",
+				"          TCONST as string,",
+				"          PRIMARYTITLE as string,",
+				"          TITLETYPE as string,",
+				"          STARTYEAR as decimal(4,0),",
+				"          ISADULT as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     query: 'SELECT DISTINCT TCONST, PRIMARYTITLE, TITLETYPE, STARTYEAR,\\nISADULT\\nFROM RAW_STAGE_SCHEMA.TITLE_BASICS',",
+				"     format: 'query') ~> titlebasics",
+				"source(output(",
+				"          MAX_TITLE_SK_2 as decimal(38,0)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     query: 'SELECT NVL(MAX(TITLE_SK), 0) as\\nMAX_TITLE_SK_2 FROM \\nIMDB_SCHEMA.DIM_TITLE_2',",
+				"     format: 'query') ~> TitleDimMaxID2",
+				"surrogateKey derive(TITLE_SK = MAX_TITLE_SK_2 + RowNum,",
+				"          DI_JOB_ID = uuid(),",
+				"          DI_LOAD_DT = currentTimestamp()-1) ~> derivedColumn1",
+				"join1 keyGenerate(output(RowNum as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey",
+				"titlebasics, TitleDimMaxID2 join(1==1,",
+				"     joinType:'cross',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          TITLE_SK as decimal(38,0),",
+				"          TCONST as string,",
+				"          PRIMARY_TITLE as string,",
+				"          TITLE_TYPE as string,",
+				"          START_YEAR as decimal(4,0),",
+				"          IS_ADULT as boolean,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DT as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          TITLE_SK,",
+				"          TCONST,",
+				"          PRIMARY_TITLE = PRIMARYTITLE,",
+				"          TITLE_TYPE = TITLETYPE,",
+				"          START_YEAR = STARTYEAR,",
+				"          IS_ADULT = ISADULT,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DT",
+				"     )) ~> sink2DimTitle"
+			]
+		}
+	}
+}

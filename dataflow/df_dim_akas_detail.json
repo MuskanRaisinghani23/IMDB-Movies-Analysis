@@ -13,23 +13,38 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "DimTitleSnowflakeTable",
-						"type": "DatasetReference"
-					},
-					"name": "dimTitle"
-				},
-				{
-					"dataset": {
 						"referenceName": "Dim_Akas",
 						"type": "DatasetReference"
 					},
 					"name": "TitleAkasMaxID"
+				},
+				{
+					"dataset": {
+						"referenceName": "Dim_Title",
+						"type": "DatasetReference"
+					},
+					"name": "dimTitle"
 				}
 			],
 			"sinks": [],
 			"transformations": [
 				{
 					"name": "join1"
+				},
+				{
+					"name": "join2"
+				},
+				{
+					"name": "surrogateKey1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "filter1"
 				}
 			],
 			"scriptLines": [
@@ -50,6 +65,13 @@
 				"     validateSchema: false,",
 				"     format: 'table') ~> AkasTable",
 				"source(output(",
+				"          MAX_AKAS_SK as decimal(38,0)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     query: 'SELECT NVL(MAX(AKAS_SK), 0) as\\nMAX_AKAS_SK FROM \\nIMDB_SCHEMA.DIM_AKAS_DETAILS',",
+				"     format: 'query') ~> TitleAkasMaxID",
+				"source(output(",
 				"          TITLE_SK as decimal(38,0),",
 				"          TCONST as string,",
 				"          PRIMARY_TITLE as string,",
@@ -62,15 +84,31 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'table') ~> dimTitle",
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     query: 'SELECT NVL(MAX(AKAS_SK), 0) as\\nMAX_AKAS_SK FROM \\nIMDB_SCHEMA.DIM_AKAS_DETAILS',",
-				"     format: 'query') ~> TitleAkasMaxID",
-				"AkasTable, dimTitle join(TITLEID == TCONST,",
+				"AkasTable, dimTitle join(toString(TITLEID) == toString(TCONST),",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join1"
+				"     broadcast: 'auto')~> join1",
+				"filter1, TitleAkasMaxID join(1==1,",
+				"     joinType:'cross',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"join2 keyGenerate(output(RowNum as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"surrogateKey1 derive(AKAS_SK = MAX_AKAS_SK + RowNum,",
+				"          DI_JOB_ID = uuid(),",
+				"          DI_LOAD_DT = currentTimestamp()) ~> derivedColumn1",
+				"join1 select(mapColumn(",
+				"          REGION,",
+				"          LANGUAGE,",
+				"          TITLE_SK",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 filter(isNull(TITLE_SK)",
+				") ~> filter1"
 			]
 		}
 	}

@@ -26,7 +26,11 @@
 					"name": "dimTitle"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "join1"
@@ -84,7 +88,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'table') ~> dimTitle",
-				"AkasTable, dimTitle join(toString(TITLEID) == toString(TCONST),",
+				"AkasTable, dimTitle join(TITLEID == TCONST,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
@@ -107,8 +111,11 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 filter(isNull(TITLE_SK)",
-				") ~> filter1"
+				"select1 filter(isNull(TITLE_SK)) ~> filter1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
 			]
 		}
 	}

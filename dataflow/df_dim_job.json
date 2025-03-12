@@ -23,20 +23,28 @@
 				{
 					"dataset": {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 						"referenceName": "dim_job",
 						"type": "DatasetReference"
 					},
 					"name": "sinkJob"
 =======
+>>>>>>> main
 						"referenceName": "ds_Dim_Job",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
+<<<<<<< HEAD
+=======
+>>>>>>> main
 >>>>>>> main
 				}
 			],
 			"transformations": [
 				{
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 					"name": "join1"
 				},
@@ -46,6 +54,7 @@
 				{
 					"name": "derivedColumn1"
 =======
+>>>>>>> main
 					"name": "surrogateKey"
 				},
 				{
@@ -56,11 +65,16 @@
 				},
 				{
 					"name": "join"
+<<<<<<< HEAD
+=======
+>>>>>>> main
 >>>>>>> main
 				}
 			],
 			"scriptLines": [
 				"parameters{",
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 				"     job_id_job as string (\"10\")",
 				"}",
@@ -72,6 +86,7 @@
 				"     query: 'SELECT DISTINCT JOB\\nFROM RAW_STAGE_SCHEMA.TITLE_PRINCIPALS',",
 				"     format: 'query') ~> jobs",
 =======
+>>>>>>> main
 				"     Job_ID as string (\"10\")",
 				"}",
 				"source(output(",
@@ -85,6 +100,9 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'table') ~> principals",
+<<<<<<< HEAD
+=======
+>>>>>>> main
 >>>>>>> main
 				"source(output(",
 				"          MAX_JOB_SK as decimal(38,0)",
@@ -92,6 +110,8 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     query: 'SELECT NVL(MAX(JOB_SK), 0) as\\nMAX_JOB_SK FROM \\nIMDB_SCHEMA.DIM_JOB',",
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 				"     format: 'query') ~> JobDimMaxID",
 				"jobs, JobDimMaxID join(1==1,",
@@ -107,6 +127,7 @@
 				"          DI_LOAD_DT = currentTimestamp()) ~> derivedColumn1",
 				"derivedColumn1 sink(allowSchemaDrift: true,",
 =======
+>>>>>>> main
 				"     format: 'query') ~> JobMaxJobID",
 				"join keyGenerate(output(rowNum as long),",
 				"     startAt: 1L,",
@@ -128,6 +149,9 @@
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join",
 				"select sink(allowSchemaDrift: true,",
+<<<<<<< HEAD
+=======
+>>>>>>> main
 >>>>>>> main
 				"     validateSchema: false,",
 				"     input(",
@@ -150,11 +174,16 @@
 				"          JOB_NAME = JOB,",
 				"          DI_JOB_ID,",
 <<<<<<< HEAD
+				"          DI_LOAD_DT = DI_Load_Date",
+				"     )) ~> sink1"
+=======
+<<<<<<< HEAD
 				"          DI_LOAD_DT",
 				"     )) ~> sinkJob"
 =======
 				"          DI_LOAD_DT = DI_Load_Date",
 				"     )) ~> sink1"
+>>>>>>> main
 >>>>>>> main
 			]
 		}

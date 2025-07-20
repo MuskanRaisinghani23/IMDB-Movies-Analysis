@@ -99,5 +99,5 @@ Data Flow
 Data Pipeline
 ![Data Pipeline for Cleaning](./screenshots/pipeline.png)
 
-Data Load
+Data Load </br>
 ![Loaded Data into Snowflake](./screenshots/snowflakeData.png)
